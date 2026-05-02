@@ -1,1 +1,2 @@
-This is the repo for agentic rag
+# agentic_rag
+Building RAG with Agentic capabilities
