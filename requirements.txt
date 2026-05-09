@@ -1,0 +1,10 @@
+langchain-community
+pypdf
+langchain
+langchain-text-splitters
+bs4
+langchain-chroma
+langchain[openai]
+langchain-openai
+langchain-text-splitters
+python-dotenv
