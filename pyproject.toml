@@ -1,0 +1,46 @@
+[project]
+name = "rag-explorer"
+version = "0.1.0"
+description = "RAG vs Non-RAG demo — LangChain + LangGraph"
+requires-python = ">=3.11"
+
+dependencies = [
+    # API
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic",
+    # LangChain core
+    "langchain",
+    "langchain-core",
+    "langchain-community",
+    "langchain-text-splitters",
+    # LLM providers
+    "langchain-groq",
+    "langchain-openai",
+    # Vector store & embeddings  (Milestone 2+)
+    "langchain-chroma",
+    "sentence-transformers",
+    # Document loaders  (Milestone 2+)
+    "pypdf",
+    "beautifulsoup4",
+    # Utilities
+    "python-dotenv",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "ruff",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

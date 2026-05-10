@@ -1,0 +1,26 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - api
+
+  api:
+    build: ./apps/api
+    ports:
+      - "8001:8001"
+    env_file:
+      - .env
+    volumes:
+      - ./apps/api:/app
+
+  # ── Milestone 2+: uncomment when document ingestion is ready ─────────────
+  # chromadb:
+  #   image: chromadb/chroma:latest
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ./data/chroma_db:/chroma/chroma

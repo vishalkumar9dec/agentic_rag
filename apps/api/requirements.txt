@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+langchain-core
+langchain-openai
+langchain-groq
+langchain-community
+python-dotenv
+pydantic
+
+# ── Milestone 2+: uncomment when document ingestion is added ──────────────
+# langchain-chroma
+# sentence-transformers
+# pypdf
