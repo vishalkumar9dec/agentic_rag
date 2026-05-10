@@ -6,27 +6,18 @@ services:
     volumes:
       - ./frontend/src:/app/src
     depends_on:
-      - non_rag_api
+      - api
 
-  non_rag_api:
-    build: ./apps/non_rag
+  api:
+    build: ./apps/api
     ports:
-      - "8001:8081"
+      - "8001:8001"
     env_file:
       - .env
     volumes:
-      - ./apps/non_rag:/app
+      - ./apps/api:/app
 
-  # ── Milestone 3: uncomment when RAG app is ready ──────────────────────────
-  # rag_api:
-  #   build: ./apps/rag
-  #   ports:
-  #     - "8002:8002"
-  #   env_file:
-  #     - .env
-  #   depends_on:
-  #     - chromadb
-  #
+  # ── Milestone 2+: uncomment when document ingestion is ready ─────────────
   # chromadb:
   #   image: chromadb/chroma:latest
   #   ports:

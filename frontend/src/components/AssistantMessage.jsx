@@ -105,7 +105,6 @@ export default function AssistantMessage({ message, onFeedback }) {
         <div className="flex items-center gap-0.5 -ml-2">
           <ActionButton onClick={handleCopy} active={copied} activeClass="text-gray-700 bg-gray-100">
             <IconCopy />
-            <span>{copied ? 'Copied' : 'Copy'}</span>
           </ActionButton>
           <ActionButton
             onClick={() => onFeedback(message.id, 'up')}

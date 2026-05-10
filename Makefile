@@ -23,8 +23,8 @@ install-frontend:  ## Install frontend npm deps
 
 # ── local dev (no Docker) ─────────────────────────────────────────────────────
 
-dev-backend:  ## Run non-RAG API locally on port 8001
-	uv run uvicorn apps.non_rag.api:app --port 8001 --reload
+dev-backend:  ## Run unified API locally on port 8001
+	uv run uvicorn apps.api.api:app --port 8001 --reload
 
 dev-frontend:  ## Run React frontend locally on port 3000
 	cd frontend && npm run dev

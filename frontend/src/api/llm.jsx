@@ -1,12 +1,10 @@
-const NON_RAG_URL = import.meta.env.VITE_NON_RAG_API_URL || 'http://localhost:8001'
-const RAG_URL = import.meta.env.VITE_RAG_API_URL || 'http://localhost:8002'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001'
 
 export async function ask(question, ragEnabled) {
-  const url = ragEnabled ? RAG_URL : NON_RAG_URL
-  const res = await fetch(`${url}/ask`, {
+  const res = await fetch(`${API_URL}/ask`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ question }),
+    body: JSON.stringify({ question, rag_enabled: ragEnabled }),
   })
   if (!res.ok) {
     const detail = await res.json().catch(() => ({}))
