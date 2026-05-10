@@ -1,101 +1,126 @@
-# VERIDICT — Enterprise Knowledge Copilot
+# RAG Explorer
 
-An agentic RAG system that self-corrects its own retrieval before answering, built for the NASSCOM Agentic AI Hackathon 2026 by **Team RAGnarok**.
+A hands-on comparison of **LLM without RAG** vs **LLM with RAG** — built milestone by milestone, with a video and article for each step.
 
-## How It Works
+Ask the same question with RAG off and RAG on. See exactly what changes, and why.
 
-```
-Query → Plan-Execute Agent
-             │
-             ▼
-        CRAG Loop (LangGraph)
-        ┌─────────────────────────────┐
-        │  Retrieve → Grade           │
-        │       ├── Good → Generate   │
-        │       └── Weak → Rewrite    │
-        │                & Retry      │
-        └─────────────────────────────┘
-             │
-             ▼
-     Confidence Score
-     ├── High → Answer + cited sources
-     └── Low  → Escalate (don't hallucinate)
-```
+---
 
-## Setup
+## Quick Start
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+# 1. Install dependencies
+make install
 
+# 2. Copy env and add your API key
 cp .env.example .env
-# Edit .env — set LLM_PROVIDER and the matching API key
+
+# 3. Run locally
+make dev-backend       # API on :8001
+make dev-frontend      # UI  on :3000
+
+# or run everything via Docker
+make dev
 ```
 
-## Run
+> **LLM provider:** Groq by default (free tier). Set `GROQ_API_KEY` in `.env`.  
+> Switch to Ollama for fully offline use — no code changes needed.
 
-```bash
-# Local dev
-uvicorn src.api.main:app --reload
+---
 
-# Docker
-docker-compose up
-```
+## What This Demonstrates
 
-## Ingest Documents
+| | Without RAG | With RAG |
+|--|-------------|----------|
+| Knowledge source | LLM training data (frozen) | Your documents (live) |
+| Updated docs | ❌ Doesn't know | ✅ Reads them |
+| Private data | ❌ Never trained on it | ✅ Retrieved at query time |
+| Wrong answer style | Confident hallucination | Grounded + cited |
 
-```bash
-python -m src.ingestion.loader --path data/raw/
-```
-
-## Run Evaluation
-
-```bash
-python -m eval.benchmark
-```
-
-## Run Tests
-
-```bash
-pytest tests/
-```
+---
 
 ## Project Structure
 
 ```
-src/
-├── ingestion/      # Document loading, chunking, embedding
-├── retrieval/      # Top-k retrieval + CRAG grading
-├── agents/         # LangGraph CRAG loop + Plan-Execute agent
-├── generation/     # LLM provider factory, answer generation, confidence scoring
-├── escalation/     # Escalation when confidence is too low
-└── api/            # FastAPI endpoints (/query, /ingest)
+apps/
+├── non_rag/        # FastAPI — plain LangChain LLM call, no retrieval
+└── rag/            # FastAPI — full RAG pipeline (Milestone 3)
 
-eval/               # CRAG ON vs OFF benchmarks (F1, hallucination rate)
-tests/              # Unit + integration tests
+frontend/           # React + Vite + Tailwind — shared UI, RAG toggle
+
+src/
+├── ingestion/      # Document loading, chunking, embedding   (Milestone 2)
+├── retrieval/      # Top-k retrieval + CRAG grading          (Milestone 4)
+├── agents/         # LangGraph CRAG loop                     (Milestone 4)
+└── generation/     # LLM provider factory, confidence score  (Milestone 3+)
+
+eval/               # CRAG ON vs OFF benchmarks               (Milestone 5)
+tests/
 data/raw/           # Raw documents — gitignored
-data/chroma_db/     # Persisted vector store — gitignored
+data/chroma_db/     # Vector store — gitignored
 ```
 
-## LLM Providers
-
-Set `LLM_PROVIDER` in `.env` to switch providers — no code changes needed:
-
-| Provider | Value |
-|----------|-------|
-| Groq (default) | `groq` |
-| Azure OpenAI | `azure_openai` |
-| AWS Bedrock | `aws_bedrock` |
-| Ollama (air-gapped) | `ollama` |
+---
 
 ## Tech Stack
 
-| Component | Technology |
-|-----------|------------|
-| Orchestration | LangGraph |
-| Tooling | LangChain |
+| Layer | Technology |
+|-------|-----------|
+| Agentic framework | LangChain + LangGraph |
+| LLM | Groq / Ollama (switchable via `.env`) |
 | Embeddings | Sentence Transformers |
-| Vector DB | ChromaDB / Qdrant |
-| API | FastAPI |
+| Vector DB | ChromaDB |
+| Backend | FastAPI |
+| Frontend | React + Vite + Tailwind CSS |
+| Package manager | uv |
+| Task runner | make |
 | Deployment | Docker Compose |
+
+---
+
+## LLM Providers
+
+Set `LLM_PROVIDER` in `.env` — no code changes needed:
+
+| Provider | `LLM_PROVIDER` value | Key required |
+|----------|----------------------|--------------|
+| Groq (default) | `groq` | `GROQ_API_KEY` |
+| Ollama (offline) | `ollama` | none |
+
+---
+
+## All Commands
+
+```bash
+make help             # list all commands
+
+make install          # install Python deps via uv
+make install-frontend # install npm deps
+
+make dev-backend      # run non-RAG API locally  (:8001)
+make dev-frontend     # run React frontend locally (:3000)
+make dev              # start everything via Docker Compose
+
+make build            # rebuild Docker images
+make stop             # stop containers
+make logs             # tail container logs
+
+make lint             # ruff lint + autofix
+make format           # ruff format
+make test             # pytest
+make clean            # remove .venv, node_modules, dist, __pycache__
+```
+
+---
+
+## Build Milestones
+
+Each milestone is a working app + a published video and article.
+
+| # | Branch | What's built | Status |
+|---|--------|-------------|--------|
+| 1 | `feature/non-rag-application` | Non-RAG Q&A app — LLM answers from memory only | ✅ Done |
+| 2 | `feature/document-ingestion` | Document loading, chunking, embeddings | 🔜 Next |
+| 3 | `feature/rag-application` | RAG app — answers grounded in real documents | ⏳ |
+| 4 | `feature/crag` | Corrective RAG — self-correcting retrieval loop | ⏳ |
+| 5 | `feature/evaluation` | F1, hallucination rate — CRAG ON vs OFF | ⏳ |
