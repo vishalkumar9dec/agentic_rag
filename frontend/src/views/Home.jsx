@@ -1,16 +1,17 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
 import RagToggle from '../components/RagToggle'
 import MessageFeed from '../components/MessageFeed'
 import InputBar from '../components/InputBar'
 import { ask } from '../api/llm'
 
-function IconMenu() {
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8001'
+
+function IconPanelLeft() {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <line x1="3" y1="12" x2="21" y2="12" />
-      <line x1="3" y1="18" x2="21" y2="18" />
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M9 3v18" />
     </svg>
   )
 }
@@ -20,6 +21,15 @@ export default function Home() {
   const [messages, setMessages] = useState([])
   const [loading, setLoading] = useState(false)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [documents, setDocuments] = useState([])
+
+  useEffect(() => {
+    if (!ragEnabled) { setDocuments([]); return }
+    fetch(`${API_URL}/documents`)
+      .then(r => r.json())
+      .then(d => setDocuments(d.documents || []))
+      .catch(() => setDocuments([]))
+  }, [ragEnabled])
 
   const addMessage = (msg) => setMessages(prev => [...prev, msg])
 
@@ -34,6 +44,7 @@ export default function Home() {
         content: data.answer,
         model: data.model || null,
         sources: data.sources || [],
+        confidence: data.confidence ?? null,
         feedback: null,
       })
     } catch (err) {
@@ -43,6 +54,7 @@ export default function Home() {
         content: null,
         error: err.message,
         sources: [],
+        confidence: null,
         feedback: null,
       })
     } finally {
@@ -66,6 +78,7 @@ export default function Home() {
         onClose={() => setSidebarOpen(false)}
         history={history}
         ragEnabled={ragEnabled}
+        documents={documents}
       />
 
       <div className="flex flex-col flex-1 min-w-0">
@@ -76,7 +89,7 @@ export default function Home() {
               className="p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
               aria-label="Toggle sidebar"
             >
-              <IconMenu />
+              <IconPanelLeft />
             </button>
             <div>
               <h1 className="text-sm font-semibold text-gray-900 leading-none">RAG Explorer</h1>

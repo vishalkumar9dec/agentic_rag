@@ -122,22 +122,35 @@ export default function AssistantMessage({ message, onFeedback }) {
           </ActionButton>
         </div>
 
-        {/* Right: source — always present */}
-        {hasDocSources ? (
-          <button
-            onClick={() => setSourcesOpen(v => !v)}
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
-          >
-            <IconDoc />
-            <span>{message.sources.length} {message.sources.length === 1 ? 'source' : 'sources'}</span>
-            <IconChevron open={sourcesOpen} />
-          </button>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-gray-200 bg-gray-50 text-gray-400">
-            <IconSparkle />
-            {message.model ? `${message.model} · LLM` : 'LLM training data'}
-          </span>
-        )}
+        {/* Right: confidence + sources */}
+        <div className="flex items-center gap-2">
+          {message.confidence !== null && message.confidence !== undefined && (
+            <span className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium border ${
+              message.confidence >= 0.7
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : message.confidence >= 0.4
+                ? 'border-amber-200 bg-amber-50 text-amber-700'
+                : 'border-red-200 bg-red-50 text-red-600'
+            }`}>
+              {Math.round(message.confidence * 100)}% confidence
+            </span>
+          )}
+          {hasDocSources ? (
+            <button
+              onClick={() => setSourcesOpen(v => !v)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 transition-colors"
+            >
+              <IconDoc />
+              <span>{message.sources.length} {message.sources.length === 1 ? 'source' : 'sources'}</span>
+              <IconChevron open={sourcesOpen} />
+            </button>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs border border-gray-200 bg-gray-50 text-gray-400">
+              <IconSparkle />
+              {message.model ? `${message.model} · LLM` : 'LLM training data'}
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Document sources panel */}

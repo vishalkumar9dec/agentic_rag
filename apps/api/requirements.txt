@@ -4,10 +4,8 @@ langchain-core
 langchain-openai
 langchain-groq
 langchain-community
+langchain-text-splitters
+langchain-chroma
 python-dotenv
 pydantic
-
-# ── Milestone 2+: uncomment when document ingestion is added ──────────────
-# langchain-chroma
-# sentence-transformers
-# pypdf
+pypdf

@@ -16,6 +16,7 @@ services:
       - .env
     volumes:
       - ./apps/api:/app
+      - ./data:/app/data
 
   # ── Milestone 2+: uncomment when document ingestion is ready ─────────────
   # chromadb:
